@@ -1,11 +1,11 @@
 {        "author" : "ELLIOTTCABLE (http://ell.io/tt)"
 
 ,          "name" : "pin-cushion"
-,       "private" :  true
 ,       "version" : "0.1.0"
+,       "license" : "ISC"
+
 ,   "description" : "Simple, maintained CLI interface to the Pinboard.in API."
 ,    "repository" : "ELLIOTTCABLE/pin-cushion"
-,       "license" : "ISC"
 
 ,           "bin" : "pin-cushion"
 
