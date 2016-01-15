@@ -16,15 +16,15 @@ You get the idea. To use it, you must first record [your authentication token][a
     pin-cushion --auth elliottcable:DEADBEEF1234567890
 
 This only provides abstracted access to the Pinboard API as defined on their site:
-#### <https://Pinboard.in/api>
+#### <https://pinboard.in/api>
 
 Any Pinboard API method described there may be passed as the `verb`; and all described arguments are
 accepted as command-line `flags`. These are not stored in this library; as your command-line
 instructions are simply converted directly to API calls; so this tool probably doesn't need much in
 the form of maintenance. `:P`
 
-   [Pinboard.in]: <https://Pinboard.in/
-   [auth]: <https://Pinboard.in/settings/password>
+   [Pinboard.in]: <https://pinboard.in/
+   [auth]: <https://pinboard.in/settings/password>
 
 ### Piping and JSON output
 If not explicitly passed a `--format` parameter, then `pin-cushion` will spit out a formatted
