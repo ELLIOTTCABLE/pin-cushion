@@ -16,7 +16,7 @@ You get the idea. To use it, you must first record [your authentication token][a
     pin-cushion --auth elliottcable:DEADBEEF1234567890
 
 This only provides abstracted access to the Pinboard API as defined on their site:
-#### <https://pinboard.in/api>
+> ### <https://pinboard.in/api>
 
 Any Pinboard API method described there may be passed as the `verb`; and all described arguments are
 accepted as command-line `flags`. These are not stored in this library; as your command-line
