@@ -3,7 +3,8 @@
 ,          "name" : "pin-cushion"
 ,       "private" :  true
 ,       "version" : "0.1.0"
-,   "description" : "Pinboard.in tools!"
+,   "description" : "Simple, maintained CLI interface to the Pinboard.in API."
+,    "repository" : "ELLIOTTCABLE/pin-cushion"
 ,       "license" : "ISC"
 
 ,           "bin" : "pin-cushion"
