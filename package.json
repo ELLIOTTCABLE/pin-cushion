@@ -1,0 +1,20 @@
+{        "author" : "ELLIOTTCABLE (http://ell.io/tt)"
+
+,          "name" : "pin-cushion"
+,       "private" :  true
+,       "version" : "0.1.0"
+,   "description" : "Pinboard.in tools!"
+,       "license" : "ISC"
+
+,           "bin" : "pin-cushion"
+
+,  "dependencies" : {
+          "pinboard.js" : "^1.0.2"
+,              "lodash" : "^4.0.0"
+,            "minimist" : "^1.2.0"
+,         "configstore" : "^1.4.0"
+,               "debug" : "^2.2.0"
+
+,             "js-yaml" : "^3.5.2"
+   }
+}

@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+var Pinboard = require('pinboard.js')
+  , minimist = require('minimist')
+  , lo       = require('lodash')
+  , YAML     = require('js-yaml')
+
+  , Configstore = require('configstore')
+  , node_debug = require('debug')
+  , package = require('./package.json')
+
+var config = new Configstore(package.name)
+  , flags = require('minimist')(process.argv.slice(2), {
+   '--'     : true
+ , 'alias'  : { 'D': 'debug' }
+ , 'boolean': [ 'debug' ]
+})
+
+var args = flags._.concat(flags['--'])
+  , verb = lo.camelCase(args[0])
+
+  , debugging = flags.debug
+
+  , API, dumpYAML
+
+if (debugging) {
+   node_debug.enable('pin-cushion')
+   delete flags.debug
+}
+
+debug = node_debug('pin-cushion')
+debug('-- verb: %j', verb)
+debug('-- args: %j', args)
+debug('-- flags: %j', flags)
+
+if (flags.auth != null) {
+   var auth = flags.auth.split(':')
+   config.set('username', auth[0])
+   config.set('token',    auth[1])
+   console.error('-- Authentication information recorded!')
+   process.exit(0)
+}
+
+if (args.length < 1) {
+   console.error("Usage: %s [verb] [arguments]", require('path').basename(process.argv[1]))
+   process.exit(10)
+}
+
+if (flags.format == null) {
+   dumpYAML = true
+   flags.format = 'json'
+}
+
+
+// --- ---- /!\ ---- ----
+
+try {
+   API = new Pinboard({ auth: {
+      type: 'token',
+      username: config.get('username'),
+      token:    config.get('token') } })
+} catch (e) {
+   if (e.message === "`params.auth.username` is required for authentication. Please provide it.") {
+      console.error("-- Error: You must authenticate with `--auth` first!")
+      process.exit(11)
+   }
+}
+
+API[verb](flags, function callback(err, response, body){
+   debug('Response!')
+   debug('-- err: %j', err)
+   debug('-- response: %j', response)
+   debug('-- body: %s', body)
+
+   if (err != null) {
+      console.error('Error: %s', err)
+      process.exit(12)
+   }
+
+   if (response.statusCode < 200 || response.statusCode > 299) {
+      console.error('API error: %s', body)
+      process.exit(Math.floor(response.statusCode / 100))
+   }
+
+   if (dumpYAML)
+      body = YAML.safeDump(JSON.parse(body), {
+        lineWidth: (process.stdout.columns || 80) - 2
+      })
+
+   console.log(body)
+})
