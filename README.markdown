@@ -38,4 +38,4 @@ with the [`jq`](https://stedolan.github.io/jq/) command-line JSON manipulation t
 This obviously lends itself to constructing complex shell pipes. Personally, I suggest aliasing
 this:
 
-    pc() { pin-cusion "$1" --format=json "$@" ;}
+    pc() { pin-cushion "$1" --format=json "$@" ;}
