@@ -3,6 +3,7 @@ var Pinboard = require('pinboard.js')
   , minimist = require('minimist')
   , lo       = require('lodash')
   , YAML     = require('js-yaml')
+  , wrap     = require('monowrap')
 
   , Configstore = require('configstore')
   , node_debug = require('debug')
@@ -20,7 +21,7 @@ var args = flags._.concat(flags['--'])
 
   , debugging = flags.debug
 
-  , API, dumpYAML
+  , noArgs, API, dumpYAML
 
 if (debugging) {
    node_debug.enable('pin-cushion')
@@ -33,6 +34,11 @@ debug('-- args: %j', args)
 debug('-- flags: %j', flags)
 
 if (flags.auth != null) {
+   if (!lo.isString(flags.auth) || !lo.includes(flags.auth, ':')) {
+      console.error("Usage: %s --auth 'username:DEADBEEF'", require('path').basename(process.argv[1]))
+      console.error("   (API token obtained at <https://pinboard.in/settings/password>.)")
+      process.exit(10)
+   }
    var auth = flags.auth.split(':')
    config.set('username', auth[0])
    config.set('token',    auth[1])
@@ -40,8 +46,24 @@ if (flags.auth != null) {
    process.exit(0)
 }
 
-if (args.length < 1) {
+function usage(API){
    console.error("Usage: %s [verb] [arguments]", require('path').basename(process.argv[1]))
+   console.error("       %s --auth 'username:DEADBEEF'", require('path').basename(process.argv[1]))
+
+   if (null != API) {
+      var verbs = Object.keys(API.__proto__).map(function(key){
+         return lo.kebabCase(key).split('-').join('/') })
+
+      console.error(wrap(
+         "Verbs: " + verbs.join(', ')
+       , { top: 1, width: process.stdout.columns } ))
+   }
+
+   console.error(wrap(
+      "API token from <https://pinboard.in/settings/password>; more usage examples at " +
+      "<http://ell.io/tt$pin-cushion#readme>; and full API documentation at " +
+      "<https://pinboard.in/api/>!"
+    , { top: 1, width: process.stdout.columns } ))
    process.exit(10)
 }
 
@@ -60,9 +82,18 @@ try {
       token:    config.get('token') } })
 } catch (e) {
    if (e.message === "`params.auth.username` is required for authentication. Please provide it.") {
+      if (args.length < 1) usage()
+
       console.error("-- Error: You must authenticate with `--auth` first!")
       process.exit(11)
    }
+}
+
+if (args.length < 1) usage(API)
+
+if (null == API[verb]) {
+   console.error("-- Error: '%s' verb is unknown to `pinboard.js`!", verb)
+   process.exit(12)
 }
 
 API[verb](flags, function callback(err, response, body){
@@ -72,8 +103,8 @@ API[verb](flags, function callback(err, response, body){
    debug('-- body: %s', body)
 
    if (err != null) {
-      console.error('Error: %s', err)
-      process.exit(12)
+      console.error('-- Error: %s', err)
+      process.exit(9)
    }
 
    if (response.statusCode < 200 || response.statusCode > 299) {
